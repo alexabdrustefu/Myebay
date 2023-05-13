@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import it.prova.myebay.dto.utente.UtenteDTO;
+import it.prova.myebay.dto.UtenteDTO;
 import it.prova.myebay.model.Utente;
 import it.prova.myebay.repository.utente.UtenteRepository;
 
@@ -35,16 +35,9 @@ public class CustomAuthenticationSuccessHandlerImpl implements AuthenticationSuc
 		UtenteDTO utenteParziale = new UtenteDTO();
 		utenteParziale.setNome(utenteFromDb.getNome());
 		utenteParziale.setCognome(utenteFromDb.getCognome());
+		utenteParziale.setUsername(utenteFromDb.getUsername());
 		request.getSession().setAttribute("userInfo", utenteParziale);
-
-		String idAnnuncioWithNoAuthParam = request.getParameter("idAnnuncioWithNoAuth");
-		if (StringUtils.isNotBlank(idAnnuncioWithNoAuthParam) && NumberUtils.isCreatable(idAnnuncioWithNoAuthParam)) {
-			Long idAnnuncioWithNoAuth = Long.parseLong(idAnnuncioWithNoAuthParam);
-			response.sendRedirect("/annuncio/show/" + idAnnuncioWithNoAuth);
-			return;
-		}
 		response.sendRedirect("home");
 
 	}
-
 }

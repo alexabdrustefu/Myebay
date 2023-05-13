@@ -8,45 +8,48 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.prova.myebay.model.Categoria;
 import it.prova.myebay.repository.categoria.CategoriaRepository;
+
 @Service
 public class CategoriaServiceImpl implements CategoriaService {
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 
-	@Transactional(readOnly = true)
-
+	@Override
 	public List<Categoria> listAll() {
-		return(List<Categoria>)categoriaRepository.findAll();
+		return (List<Categoria>) categoriaRepository.findAll();
 	}
 
-	@Transactional(readOnly = true)
-
+	@Override
 	public Categoria caricaSingoloElemento(Long id) {
 		return categoriaRepository.findById(id).orElse(null);
 	}
 
-	@Transactional
+	@Override
 	public void aggiorna(Categoria categoriaInstance) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	@Transactional
-	public void inserisciNuovo(Categoria ruoloInstance) {
-		categoriaRepository.save(ruoloInstance); 
-		
+	@Override
+	public void inserisciNuovo(Categoria categoriaInstance) {
+		categoriaRepository.save(categoriaInstance);
+
 	}
 
-	@Transactional
+	@Override
 	public void rimuovi(Long idToDelete) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	@Transactional(readOnly = true)
+	@Override
+	public Categoria cercaPerDescrizioneECodice(String descrizione, String codice) {
+		return categoriaRepository.findByDescrizioneAndCodice(descrizione, codice);
+	}
+
+	@Override
 	public Categoria cercaPerDescrizione(String descrizione) {
 		return categoriaRepository.findByDescrizione(descrizione);
 	}
-	
 
 }

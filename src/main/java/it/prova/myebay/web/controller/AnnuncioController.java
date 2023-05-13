@@ -1,15 +1,17 @@
 package it.prova.myebay.web.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import it.prova.myebay.dto.AnnuncioDTO;
@@ -19,42 +21,96 @@ import it.prova.myebay.service.AnnuncioService;
 import it.prova.myebay.service.CategoriaService;
 
 @Controller
-@RequestMapping(value = "/annuncio")
+@RequestMapping("/annuncio")
 public class AnnuncioController {
+
 	@Autowired
 	private AnnuncioService annuncioService;
+
 	@Autowired
 	private CategoriaService categoriaService;
-	
+
 	@GetMapping
-	public ModelAndView listAllArticoli() {
+	public ModelAndView listAllAnnunci() {
 		ModelAndView mv = new ModelAndView();
-		List<Annuncio> articoli = annuncioService.listAllElements();
-		mv.addObject("annuncio_list_attribute", AnnuncioDTO.createAnnuncioDTOListFromModelList(articoli,false));
-		mv.setViewName("annuncio/list");
+		mv.addObject("annuncio_list_attr",
+				AnnuncioDTO.createAnnuncioDTOListFromModelList(annuncioService.listAll(), false));
+		mv.setViewName("/public/annuncio/list");
 		return mv;
 	}
+
 	@GetMapping("/search")
-	public String searchFilm(Model model) {
-		model.addAttribute("annuncio_list_attribute",
+	public String searchAnnuncio(Model model) {
+		model.addAttribute("categorie_totali_attr",
 				CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
-		return "public/annuncio/search";
+		model.addAttribute("search_annuncio_attr", new AnnuncioDTO());
+		return "/public/annuncio/search";
 	}
 
 	@PostMapping("/list")
-	public String listArticoli(AnnuncioDTO annuncioExample, ModelMap model) {
-		List<Annuncio> annunci = annuncioService.findByExample(annuncioExample.buildAnnuncioModel());
-		model.addAttribute("annuncio_list_attribute", AnnuncioDTO.createAnnuncioDTOListFromModelList(annunci,false));
-		return "public/annuncio/list";
+	public String listAnnunci(AnnuncioDTO annuncioExample, ModelMap model) {
+		model.addAttribute("annuncio_list_attr", AnnuncioDTO.createAnnuncioDTOListFromModelList(
+				annuncioService.findByExampleRicerca(annuncioExample.buildAnnuncioModel(true, true)), true));
+		return "/public/annuncio/list";
 	}
 
-	@GetMapping("/show/{idFilm}")
-	public String showFilm(@PathVariable(required = true) Long idAnnuncio, Model model) {
-		model.addAttribute("show_annuncio_attr",
-				AnnuncioDTO.buildAnnuncioDTOFromModel(annuncioService.caricaSingoloElementoEager(idAnnuncio), true));
-		return "annuncio/show";
+	@GetMapping("/insert")
+	public String create(Model model) {
+		model.addAttribute("categorie_totali_attr",
+				CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
+		model.addAttribute("insert_annuncio_attr", new AnnuncioDTO());
+		return "/public/annuncio/insert";
 	}
-	
-	
-	
+
+	@PostMapping("/save")
+	public String save(@Validated @ModelAttribute("insert_annuncio_attr") AnnuncioDTO annuncioDTO, BindingResult result,
+			Model model, RedirectAttributes redirectAttrs) {
+
+		if (result.hasErrors()) {
+			model.addAttribute("categorie_totali_attr",
+					CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
+			return "/public/annuncio/insert";
+		}
+		try {
+			annuncioService.inserisciNuovo(annuncioDTO.buildAnnuncioModel(true, true));
+			redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		} catch (RuntimeException e) {
+			redirectAttrs.addFlashAttribute("errorMessage", "Attenzione! Utente non loggato.");
+			return "redirect:/annuncio";
+		}
+		return "redirect:/annuncio";
+
+	}
+
+	@GetMapping("/show/{idAnnuncio}")
+	public String show(@PathVariable(required = true) Long idAnnuncio, Model model) {
+		Annuncio annuncioModel = annuncioService.caricaSingoloElementoConCategorie(idAnnuncio);
+		AnnuncioDTO annuncioDTO = AnnuncioDTO.buildAnnuncioDTOFromModel(annuncioModel, true);
+		model.addAttribute("show_annuncio_attr", annuncioDTO);
+		model.addAttribute("categorie_totali_attr", annuncioModel.getCategorie());
+		return "/public/annuncio/show";
+	}
+
+	@GetMapping("delete/{idAnnuncio}")
+	public String deleteAnnuncio(@PathVariable(required = true) Long idAnnuncio, Model model) {
+		Annuncio annuncioModel = annuncioService.caricaSingoloElementoConCategorie(idAnnuncio);
+		AnnuncioDTO annuncioDTO = AnnuncioDTO.buildAnnuncioDTOFromModel(annuncioModel, true);
+		model.addAttribute("delete_annuncio_attr", annuncioDTO);
+		model.addAttribute("categorie_totali_attr", annuncioModel.getCategorie());
+		return "/public/annuncio/delete";
+	}
+
+	@PostMapping("/delete")
+	public String delete(Long idAnnuncio, RedirectAttributes redirectAttrs) {
+		try {
+			annuncioService.rimuovi(idAnnuncio);
+			redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		} catch (Exception e) {
+			redirectAttrs.addFlashAttribute("errorMessage",
+					"Attenzione! L'annuncio che stai cercando di eliminare è già chiuso.");
+			return "redirect:/annuncio";
+		}
+		return "redirect:/annuncio";
+
+	}
 }

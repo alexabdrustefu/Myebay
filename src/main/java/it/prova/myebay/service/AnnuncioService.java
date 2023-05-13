@@ -5,18 +5,19 @@ import java.util.List;
 import it.prova.myebay.model.Annuncio;
 
 public interface AnnuncioService {
-	public List<Annuncio> listAllElements();
 
+	public List<Annuncio> listAll();
+	
 	public Annuncio caricaSingoloElemento(Long id);
 	
-	public Annuncio caricaSingoloElementoEager(Long id);
-
-	public void aggiorna(Annuncio filmInstance);
-
-	public void inserisciNuovo(Annuncio filmInstance);
-
-	public void rimuovi(Long idFilmToDelete);
-
-	public List<Annuncio> findByExample(Annuncio example);
+	public Annuncio caricaSingoloElementoConCategorie(Long id);
+	
+	public void aggiorna (Annuncio annuncioInstance);
+	
+	public void inserisciNuovo (Annuncio annuncioInstance);
+	
+	public void rimuovi (Long idAnnuncio);
+	
+	public List<Annuncio> findByExampleRicerca(Annuncio example);
 
 }

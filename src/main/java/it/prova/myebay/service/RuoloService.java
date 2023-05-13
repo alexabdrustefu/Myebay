@@ -16,6 +16,6 @@ public List<Ruolo> listAll() ;
 
 	public void rimuovi(Long idToDelete) ;
 
-	public Ruolo cercaPerDescrizioneECodice(String descrizione, String codice) ;
+	public Ruolo cercaPerDescrizioneECodice(String descrizione, String codice);
 
 }

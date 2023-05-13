@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import it.prova.myebay.dto.RuoloDTO;
-import it.prova.myebay.dto.utente.UtenteDTO;
+import it.prova.myebay.dto.UtenteDTO;
 import it.prova.myebay.service.RuoloService;
 import it.prova.myebay.service.UtenteService;
 import it.prova.myebay.validation.ValidationNoPassword;

@@ -1,6 +1,6 @@
 package it.prova.myebay.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,44 +15,29 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "acquisto")
 public class Acquisto {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 	@Column(name = "descrizione")
 	private String descrizione;
-	@Column(name = "data")
-	private Date data;
+	@Column(name = "dataacquisto")
+	private LocalDate dataAcquisto;
 	@Column(name = "prezzo")
-	private Integer prezzo;
+	private Double prezzo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "utente_id", nullable = false)
-	private Utente utenteAcquirente;
+	private Utente utente;
 
 	public Acquisto() {
-
+		super();
 	}
 
-	public Acquisto(String descrizione, Date data, Integer prezzo, Utente utenteAcquirente) {
+	public Acquisto(String descrizione, Double prezzo) {
+		super();
 		this.descrizione = descrizione;
-		this.data = data;
-		this.prezzo = prezzo;
-		this.utenteAcquirente = utenteAcquirente;
-	}
-
-	public Acquisto(Long id, String descrizione, Date data, Integer prezzo, Utente utenteAcquirente) {
-		this.id = id;
-		this.descrizione = descrizione;
-		this.data = data;
-		this.prezzo = prezzo;
-		this.utenteAcquirente = utenteAcquirente;
-	}
-
-	public Acquisto(Long id, String descrizione, Date data, Integer prezzo) {
-		this.id = id;
-		this.descrizione = descrizione;
-		this.data = data;
 		this.prezzo = prezzo;
 	}
 
@@ -72,28 +57,28 @@ public class Acquisto {
 		this.descrizione = descrizione;
 	}
 
-	public Date getData() {
-		return data;
+	public LocalDate getDataAcquisto() {
+		return dataAcquisto;
 	}
 
-	public void setData(Date data) {
-		this.data = data;
+	public void setDataAcquisto(LocalDate dataAcquisto) {
+		this.dataAcquisto = dataAcquisto;
 	}
 
-	public Integer getPrezzo() {
+	public Double getPrezzo() {
 		return prezzo;
 	}
 
-	public void setPrezzo(Integer prezzo) {
+	public void setPrezzo(Double prezzo) {
 		this.prezzo = prezzo;
 	}
 
-	public Utente getUtenteAcquirente() {
-		return utenteAcquirente;
+	public Utente getUtente() {
+		return utente;
 	}
 
-	public void setUtenteAcquirente(Utente utenteAcquirente) {
-		this.utenteAcquirente = utenteAcquirente;
+	public void setUtente(Utente utente) {
+		this.utente = utente;
 	}
 
 }

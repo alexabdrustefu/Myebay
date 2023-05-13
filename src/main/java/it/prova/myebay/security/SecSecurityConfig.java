@@ -10,55 +10,58 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
-public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
-
+public class SecSecurityConfig  extends WebSecurityConfigurerAdapter {
+	
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
-
+	
 	@Autowired
-	private CustomAuthenticationSuccessHandlerImpl successHandler;
-
+    private CustomAuthenticationSuccessHandlerImpl successHandler;
+	
 	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(customUserDetailsService);
-		// .passwordEncoder(passwordEncoder());
-	}
-
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		 http.authorizeRequests()
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+ 
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+         .userDetailsService(customUserDetailsService);
+         //.passwordEncoder(passwordEncoder());
+    }
+    
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+    	 http.authorizeRequests()
          .antMatchers("/assets/**").permitAll()
-         .antMatchers("/**").permitAll()
+         .antMatchers("/**","/public/**").permitAll()
          .antMatchers("/login").permitAll()
-         .antMatchers("/account").hasAnyRole("ADMIN", "CLASSIC_USER")
          .antMatchers("/utente/**").hasRole("ADMIN")
-//         .antMatchers("/**").hasAnyRole("ADMIN", "CLASSIC_USER")
-//         .antMatchers("/anonymous*").anonymous()
+         .antMatchers("/**").hasAnyRole("ADMIN", "CLASSIC_USER")
+         .antMatchers("/anonymous*").anonymous()
+         .antMatchers("/resetpassword/**").authenticated()
          .anyRequest().authenticated()
          .and().exceptionHandling().accessDeniedPage("/accessDenied")
          .and()
-          .formLogin()
-          .loginPage("/login")
-//          .defaultSuccessUrl("/home",true)
-          //uso un custom handler perché voglio mettere delle user info in session
-          .successHandler(successHandler)
-          .failureUrl("/login?error=true")
-          .permitAll()
+         	.formLogin()
+         	.loginPage("/login")
+         	.defaultSuccessUrl("/home",true)
+         ///uso un custom handler perché voglio mettere delle user info in session
+         	.successHandler(successHandler)
+         	.failureUrl("/login?error=true")
+         	.permitAll()
          .and()
-          .logout()
-          .logoutSuccessUrl("/executeLogout")
+         	.logout()
+         	.logoutSuccessUrl("/executeLogout")
             .invalidateHttpSession(true)
             .permitAll()
          .and()
             .csrf()
             .disable();
 //         
-	}
+    }
 }

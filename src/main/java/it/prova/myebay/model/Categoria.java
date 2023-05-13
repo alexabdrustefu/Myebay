@@ -21,20 +21,16 @@ public class Categoria {
 	private String codice;
 
 	public Categoria() {
-
+		super();
 	}
 
 	public Categoria(Long id) {
+		super();
 		this.id = id;
 	}
 
 	public Categoria(String descrizione, String codice) {
-		this.descrizione = descrizione;
-		this.codice = codice;
-	}
-
-	public Categoria(Long id, String descrizione, String codice) {
-		this.id = id;
+		super();
 		this.descrizione = descrizione;
 		this.codice = codice;
 	}

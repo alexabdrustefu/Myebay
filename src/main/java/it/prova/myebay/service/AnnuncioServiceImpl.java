@@ -1,51 +1,80 @@
 package it.prova.myebay.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.prova.myebay.exception.AnnuncioChiusoEccezione;
 import it.prova.myebay.model.Annuncio;
+import it.prova.myebay.model.Utente;
 import it.prova.myebay.repository.annuncio.AnnuncioRepository;
+
 @Service
 public class AnnuncioServiceImpl implements AnnuncioService {
+
 	@Autowired
-	private AnnuncioRepository repository;
+	private AnnuncioRepository annuncioRepository;
+
+	@Autowired
+	private UtenteService utenteService;
+
+	@Override
 	@Transactional(readOnly = true)
-	public List<Annuncio> listAllElements() {
-		return (List<Annuncio>) repository.findAll();
+	public List<Annuncio> listAll() {
+		return (List<Annuncio>) annuncioRepository.findAll();
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public Annuncio caricaSingoloElemento(Long id) {
-		return repository.findById(id).orElse(null);
+		return annuncioRepository.findById(id).orElse(null);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public Annuncio caricaSingoloElementoEager(Long id) {
-		return repository.findSingleFilmEager(id);
+	public Annuncio caricaSingoloElementoConCategorie(Long id) {
+		return annuncioRepository.findByIdConCategorie(id).orElse(null);
 	}
 
-	@Transactional(readOnly = true)
-	public void aggiorna(Annuncio filmInstance) {
-		repository.save(filmInstance);
+	@Override
+	@Transactional
+	public void aggiorna(Annuncio annuncioInstance) {
+		annuncioRepository.save(annuncioInstance);
 	}
 
-	@Transactional(readOnly = true)
-	public void inserisciNuovo(Annuncio filmInstance) {
-		repository.save(filmInstance);
-		
+	@Override
+	@Transactional
+	public void inserisciNuovo(Annuncio annuncioInstance) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Utente utenteFromDb = utenteService.findByUsername(username);
+
+		if (utenteFromDb == null)
+			throw new RuntimeException("Elemento non trovato.");
+
+		annuncioInstance.setUtente(utenteFromDb);
+		annuncioInstance.setAperto(true);
+		annuncioInstance.setDataCreazione(LocalDate.now());
+		annuncioRepository.save(annuncioInstance);
 	}
 
-	@Transactional(readOnly = true)
-	public void rimuovi(Long idFilmToDelete) {
-		repository.deleteById(idFilmToDelete);		
+	@Override
+	@Transactional
+	public void rimuovi(Long idAnnuncio) {
+		Annuncio annuncioFromDB = this.caricaSingoloElemento(idAnnuncio);
+		if (!annuncioFromDB.isAperto()) {
+			throw new AnnuncioChiusoEccezione();
+		}
+		annuncioRepository.deleteById(idAnnuncio);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public List<Annuncio> findByExample(Annuncio example) {
-		return this.listAllElements();
+	public List<Annuncio> findByExampleRicerca(Annuncio example) {
+		return annuncioRepository.findByExampleRicerca(example);
 	}
 
 }

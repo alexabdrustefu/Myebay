@@ -17,15 +17,19 @@ public class CustomUtenteRepositoryImpl implements CustomUtenteRepository {
 
 	@PersistenceContext
 	private EntityManager entityManager;
-
+	
+	
 	@Override
 	public List<Utente> findByExample(Utente example) {
 		Map<String, Object> paramaterMap = new HashMap<String, Object>();
 		List<String> whereClauses = new ArrayList<String>();
 
-		StringBuilder queryBuilder = new StringBuilder(
-				"select u from Utente u left join fetch u.ruoli r where u.id = u.id ");
+		StringBuilder queryBuilder = new StringBuilder("select u from Utente u left join fetch u.ruoli r where u.id = u.id ");
 
+		if (example.getRuoli() != null && !example.getRuoli().isEmpty()) {
+			whereClauses.add(" r in :ruoli ");
+			paramaterMap.put("ruoli", example.getRuoli());
+		}
 		if (StringUtils.isNotEmpty(example.getNome())) {
 			whereClauses.add(" u.nome  like :nome ");
 			paramaterMap.put("nome", "%" + example.getNome() + "%");
@@ -38,16 +42,17 @@ public class CustomUtenteRepositoryImpl implements CustomUtenteRepository {
 			whereClauses.add(" u.username like :username ");
 			paramaterMap.put("username", "%" + example.getUsername() + "%");
 		}
+		
 		if (example.getDateCreated() != null) {
-			whereClauses.add(" u.dateCreated >= :dateCreated ");
+			whereClauses.add("u.dateCreated >= :dateCreated ");
 			paramaterMap.put("dateCreated", example.getDateCreated());
 		}
 		if (example.getStato() != null) {
-			whereClauses.add(" u.stato = :stato ");
+			whereClauses.add("u.stato >= :stato ");
 			paramaterMap.put("stato", example.getStato());
 		}
-
-		queryBuilder.append(!whereClauses.isEmpty() ? " and " : "");
+		
+		queryBuilder.append(!whereClauses.isEmpty()?" and ":"");
 		queryBuilder.append(StringUtils.join(whereClauses, " and "));
 		TypedQuery<Utente> typedQuery = entityManager.createQuery(queryBuilder.toString(), Utente.class);
 
@@ -57,5 +62,5 @@ public class CustomUtenteRepositoryImpl implements CustomUtenteRepository {
 
 		return typedQuery.getResultList();
 	}
-
+	
 }

@@ -19,7 +19,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "utente")
 public class Utente {
@@ -38,17 +37,17 @@ public class Utente {
 	private String cognome;
 	@Column(name = "dateCreated")
 	private LocalDate dateCreated;
-	@Column(name = "creditoResiduo")
-	private Integer creditoResiduo = 0;
 
 	// se non uso questa annotation viene gestito come un intero
 	@Enumerated(EnumType.STRING)
 	private StatoUtente stato;
+	@Column(name = "creditoresiduo")
+	private Double creditoResiduo;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utenteInserimento")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utente")
 	private Set<Annuncio> annunci = new HashSet<>();
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utenteAcquirente")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utente")
 	private Set<Acquisto> acquisti = new HashSet<>();
 
 	@ManyToMany
@@ -59,30 +58,9 @@ public class Utente {
 	}
 
 	public Utente(String username, String password) {
+		super();
 		this.username = username;
 		this.password = password;
-	}
-
-	public Utente(String username, String password, String nome, String cognome, LocalDate dateCreated,
-			Integer creditoResiduo) {
-		this.username = username;
-		this.password = password;
-		this.nome = nome;
-		this.cognome = cognome;
-		this.dateCreated = dateCreated;
-		this.creditoResiduo = creditoResiduo;
-	}
-
-	public Utente(Long id, String username, String password, String nome, String cognome, LocalDate dateCreated,
-			Integer creditoResiduo, StatoUtente stato) {
-		this.id = id;
-		this.username = username;
-		this.password = password;
-		this.nome = nome;
-		this.cognome = cognome;
-		this.dateCreated = dateCreated;
-		this.creditoResiduo = creditoResiduo;
-		this.stato = stato;
 	}
 
 	public Utente(String username, String password, String nome, String cognome, LocalDate dateCreated) {
@@ -93,8 +71,15 @@ public class Utente {
 		this.dateCreated = dateCreated;
 	}
 
-	public Utente(String usernameUtente) {
-		this.username = usernameUtente;
+	public Utente(Long id, String username, String password, String nome, String cognome, LocalDate dateCreated,
+			StatoUtente stato) {
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.nome = nome;
+		this.cognome = cognome;
+		this.dateCreated = dateCreated;
+		this.stato = stato;
 	}
 
 	public Long getId() {
@@ -161,30 +146,6 @@ public class Utente {
 		this.stato = stato;
 	}
 
-	public Integer getCreditoResiduo() {
-		return creditoResiduo;
-	}
-
-	public void setCreditoResiduo(Integer creditoResiduo) {
-		this.creditoResiduo = creditoResiduo;
-	}
-
-	public Set<Annuncio> getAnnunci() {
-		return annunci;
-	}
-
-	public void setAnnunci(Set<Annuncio> annunci) {
-		this.annunci = annunci;
-	}
-
-	public Set<Acquisto> getAcquisti() {
-		return acquisti;
-	}
-
-	public void setAcquisti(Set<Acquisto> acquisti) {
-		this.acquisti = acquisti;
-	}
-
 	public boolean isAdmin() {
 		for (Ruolo ruoloItem : ruoli) {
 			if (ruoloItem.getCodice().equals(Ruolo.ROLE_ADMIN))
@@ -200,5 +161,4 @@ public class Utente {
 	public boolean isDisabilitato() {
 		return this.stato != null && this.stato.equals(StatoUtente.DISABILITATO);
 	}
-
 }

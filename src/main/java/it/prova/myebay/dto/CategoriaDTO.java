@@ -12,8 +12,19 @@ public class CategoriaDTO {
 	private String descrizione;
 	private String codice;
 
+	public CategoriaDTO() {
+		super();
+	}
+
 	public CategoriaDTO(Long id, String descrizione, String codice) {
+		super();
 		this.id = id;
+		this.descrizione = descrizione;
+		this.codice = codice;
+	}
+
+	public CategoriaDTO(String descrizione, String codice) {
+		super();
 		this.descrizione = descrizione;
 		this.codice = codice;
 	}
@@ -57,4 +68,5 @@ public class CategoriaDTO {
 			return CategoriaDTO.buildCategoriaDTOFromModel(categoriaEntity);
 		}).collect(Collectors.toList());
 	}
+
 }
