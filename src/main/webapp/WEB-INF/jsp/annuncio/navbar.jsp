@@ -21,7 +21,7 @@
             <a class="nav-link dropdown-toggle" href="#" id="dropdown07" data-bs-toggle="dropdown" aria-expanded="false">Opzioni</a>
             <ul class="dropdown-menu" aria-labelledby="dropdown07">
               <li><a class="dropdown-item" href="${pageContext.request.contextPath}/home">Home</a></li>
-              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/annuncio/search">Cerca Annuncias</a></li>
+              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/annuncio/search">Cerca Annunciaso</a></li>
             
             </ul> 
           </li>   

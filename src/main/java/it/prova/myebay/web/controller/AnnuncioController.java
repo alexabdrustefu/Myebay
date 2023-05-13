@@ -21,9 +21,8 @@ import it.prova.myebay.service.AnnuncioService;
 import it.prova.myebay.service.CategoriaService;
 
 @Controller
-@RequestMapping("/annuncio")
+@RequestMapping(value = "/annuncio")
 public class AnnuncioController {
-
 	@Autowired
 	private AnnuncioService annuncioService;
 
@@ -35,7 +34,7 @@ public class AnnuncioController {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("annuncio_list_attr",
 				AnnuncioDTO.createAnnuncioDTOListFromModelList(annuncioService.listAll(), false));
-		mv.setViewName("/public/annuncio/list");
+		mv.setViewName("/annuncio/list");
 		return mv;
 	}
 
@@ -44,14 +43,14 @@ public class AnnuncioController {
 		model.addAttribute("categorie_totali_attr",
 				CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
 		model.addAttribute("search_annuncio_attr", new AnnuncioDTO());
-		return "/public/annuncio/search";
+		return "/annuncio/search";
 	}
 
 	@PostMapping("/list")
 	public String listAnnunci(AnnuncioDTO annuncioExample, ModelMap model) {
 		model.addAttribute("annuncio_list_attr", AnnuncioDTO.createAnnuncioDTOListFromModelList(
 				annuncioService.findByExampleRicerca(annuncioExample.buildAnnuncioModel(true, true)), true));
-		return "/public/annuncio/list";
+		return "/annuncio/list";
 	}
 
 	@GetMapping("/insert")
@@ -59,7 +58,7 @@ public class AnnuncioController {
 		model.addAttribute("categorie_totali_attr",
 				CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
 		model.addAttribute("insert_annuncio_attr", new AnnuncioDTO());
-		return "/public/annuncio/insert";
+		return "/annuncio/insert";
 	}
 
 	@PostMapping("/save")
@@ -69,7 +68,7 @@ public class AnnuncioController {
 		if (result.hasErrors()) {
 			model.addAttribute("categorie_totali_attr",
 					CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
-			return "/public/annuncio/insert";
+			return "/annuncio/insert";
 		}
 		try {
 			annuncioService.inserisciNuovo(annuncioDTO.buildAnnuncioModel(true, true));
@@ -84,7 +83,7 @@ public class AnnuncioController {
 
 	@GetMapping("/show/{idAnnuncio}")
 	public String show(@PathVariable(required = true) Long idAnnuncio, Model model) {
-		Annuncio annuncioModel = annuncioService.caricaSingoloElementoConCategorie(idAnnuncio);
+		Annuncio annuncioModel = annuncioService.caricaSingoloElemento(idAnnuncio);
 		AnnuncioDTO annuncioDTO = AnnuncioDTO.buildAnnuncioDTOFromModel(annuncioModel, true);
 		model.addAttribute("show_annuncio_attr", annuncioDTO);
 		model.addAttribute("categorie_totali_attr", annuncioModel.getCategorie());
