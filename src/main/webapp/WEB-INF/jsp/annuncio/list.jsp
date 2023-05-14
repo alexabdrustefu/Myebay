@@ -11,7 +11,7 @@
 </head>
 <body class="d-flex flex-column h-100">
 	 <sec:authorize access="isAuthenticated()" var="isAutenticato"></sec:authorize>
-	 <sec:authentication property="principal.username" var="utenteInPagina"/>
+	 
 <c:choose>
    <c:when test="${isAutenticato}"><jsp:include page="../navbar.jsp"></jsp:include></c:when>
    <c:otherwise><jsp:include page="./navbar.jsp"></jsp:include>
@@ -32,14 +32,14 @@
 			</div>
 			
 			<div class='card'>
-			    <div class='card-header'>
+			    <div class='card-header border border-success'>
 			        <h5>Lista dei risultati</h5> 
 			    </div>
-			    <div class='card-body'>
+			    <div class='card-body border border-success'>
 			    <sec:authorize access="isAuthenticated()">
 			    <a class="btn btn-primary "
 						href="${pageContext.request.contextPath}/annuncio/insert">Add New</a> </sec:authorize>
-			    	<a href="${pageContext.request.contextPath}/annuncio/search" class='btn btn-outline-secondary' >
+		    	<a class="btn btn-outline-danger" href="${pageContext.request.contextPath}/annuncio/search" class='btn btn-outline-secondary' >
 				            <i class='fa fa-chevron-left'></i> Torna alla Ricerca
 				        </a>
 			    
@@ -64,11 +64,13 @@
 												value="${localDateToBeParsed}" /></td>
 										<td>
 										<c:choose>
-												<c:when test="${!isAutenticato}"><a class="btn btn-sm btn-outline-secondary" href="${pageContext.request.contextPath}/annuncio/show/${annuncioItem.id }">Visualizza</a></c:when>
+												<c:when test="${!isAutenticato}"><a class="btn btn-sm btn-primary" href="${pageContext.request.contextPath}/annuncio/show/${annuncioItem.id }">Visualizza</a></c:when>
 												<c:otherwise>
-												<a class="btn btn-sm btn-outline-secondary" href="${pageContext.request.contextPath}/annuncio/show/${annuncioItem.id }">Visualizza</a>
+												<a class="btn btn-sm btn-outline-primary" href="${pageContext.request.contextPath}/annuncio/show/${annuncioItem.id }">Visualizza</a>
+												<sec:authentication property="principal.username" var="utenteInPagina"/>
 												<c:if test="${annuncioItem.utente.username == utenteInPagina }">
 												<a class="btn btn-sm btn-outline-danger" href="${pageContext.request.contextPath}/annuncio/delete/${annuncioItem.id }">Delete</a>
+												<a class="btn btn-sm btn-outline-primary" href="${pageContext.request.contextPath}/annuncio/edit/${annuncioItem.id }">Edit</a>
 												</c:if>
 												</c:otherwise>
 										</c:choose>

@@ -1,5 +1,7 @@
 package it.prova.myebay.web.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +18,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 import it.prova.myebay.dto.AnnuncioDTO;
 import it.prova.myebay.dto.CategoriaDTO;
+import it.prova.myebay.exception.AnnuncioChiusoEccezione;
+import it.prova.myebay.exception.UtenteNotFoundException;
 import it.prova.myebay.model.Annuncio;
 import it.prova.myebay.service.AnnuncioService;
 import it.prova.myebay.service.CategoriaService;
 
 @Controller
-@RequestMapping(value = "/annuncio")
+@RequestMapping("/annuncio")
 public class AnnuncioController {
+
 	@Autowired
 	private AnnuncioService annuncioService;
 
@@ -34,7 +39,7 @@ public class AnnuncioController {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("annuncio_list_attr",
 				AnnuncioDTO.createAnnuncioDTOListFromModelList(annuncioService.listAll(), false));
-		mv.setViewName("/annuncio/list");
+		mv.setViewName("annuncio/list");
 		return mv;
 	}
 
@@ -43,14 +48,14 @@ public class AnnuncioController {
 		model.addAttribute("categorie_totali_attr",
 				CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
 		model.addAttribute("search_annuncio_attr", new AnnuncioDTO());
-		return "/annuncio/search";
+		return "annuncio/search";
 	}
 
 	@PostMapping("/list")
 	public String listAnnunci(AnnuncioDTO annuncioExample, ModelMap model) {
 		model.addAttribute("annuncio_list_attr", AnnuncioDTO.createAnnuncioDTOListFromModelList(
 				annuncioService.findByExampleRicerca(annuncioExample.buildAnnuncioModel(true, true)), true));
-		return "/annuncio/list";
+		return "annuncio/list";
 	}
 
 	@GetMapping("/insert")
@@ -58,7 +63,7 @@ public class AnnuncioController {
 		model.addAttribute("categorie_totali_attr",
 				CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
 		model.addAttribute("insert_annuncio_attr", new AnnuncioDTO());
-		return "/annuncio/insert";
+		return "annuncio/insert";
 	}
 
 	@PostMapping("/save")
@@ -68,12 +73,12 @@ public class AnnuncioController {
 		if (result.hasErrors()) {
 			model.addAttribute("categorie_totali_attr",
 					CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
-			return "/annuncio/insert";
+			return "annuncio/insert";
 		}
 		try {
 			annuncioService.inserisciNuovo(annuncioDTO.buildAnnuncioModel(true, true));
 			redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
-		} catch (RuntimeException e) {
+		} catch (UtenteNotFoundException e) {
 			redirectAttrs.addFlashAttribute("errorMessage", "Attenzione! Utente non loggato.");
 			return "redirect:/annuncio";
 		}
@@ -83,11 +88,11 @@ public class AnnuncioController {
 
 	@GetMapping("/show/{idAnnuncio}")
 	public String show(@PathVariable(required = true) Long idAnnuncio, Model model) {
-		Annuncio annuncioModel = annuncioService.caricaSingoloElemento(idAnnuncio);
+		Annuncio annuncioModel = annuncioService.caricaSingoloElementoConCategorie(idAnnuncio);
 		AnnuncioDTO annuncioDTO = AnnuncioDTO.buildAnnuncioDTOFromModel(annuncioModel, true);
 		model.addAttribute("show_annuncio_attr", annuncioDTO);
 		model.addAttribute("categorie_totali_attr", annuncioModel.getCategorie());
-		return "/public/annuncio/show";
+		return "annuncio/show";
 	}
 
 	@GetMapping("delete/{idAnnuncio}")
@@ -96,7 +101,7 @@ public class AnnuncioController {
 		AnnuncioDTO annuncioDTO = AnnuncioDTO.buildAnnuncioDTOFromModel(annuncioModel, true);
 		model.addAttribute("delete_annuncio_attr", annuncioDTO);
 		model.addAttribute("categorie_totali_attr", annuncioModel.getCategorie());
-		return "/public/annuncio/delete";
+		return "annuncio/delete";
 	}
 
 	@PostMapping("/delete")
@@ -104,12 +109,61 @@ public class AnnuncioController {
 		try {
 			annuncioService.rimuovi(idAnnuncio);
 			redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
-		} catch (Exception e) {
+		} catch (AnnuncioChiusoEccezione e) {
 			redirectAttrs.addFlashAttribute("errorMessage",
 					"Attenzione! L'annuncio che stai cercando di eliminare è già chiuso.");
+			return "redirect:/annuncio";
+		} catch (UtenteNotFoundException e) {
+			redirectAttrs.addFlashAttribute("errorMessage", "Attenzione! Utente non loggato.");
+			return "redirect:/annuncio";
+
+		} catch (RuntimeException er) {
+			redirectAttrs.addFlashAttribute("errorMessage", "Attenzione! Non puoi eliminare un annuncio non tuo.");
 			return "redirect:/annuncio";
 		}
 		return "redirect:/annuncio";
 
 	}
+
+	@GetMapping("edit/{idAnnuncio}")
+	public String editAnnuncio(@PathVariable(required = true) Long idAnnuncio, Model model) {
+		Annuncio annuncioModel = annuncioService.caricaSingoloElementoConCategorie(idAnnuncio);
+		AnnuncioDTO annuncioDTO = AnnuncioDTO.buildAnnuncioDTOFromModel(annuncioModel, true);
+		model.addAttribute("edit_annuncio_attr", annuncioDTO);
+		model.addAttribute("categorie_totali_attr",
+				CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
+		return "annuncio/edit";
+	}
+
+	@PostMapping("/edit")
+	public String edit(@Valid @ModelAttribute("edit_annuncio_attr") AnnuncioDTO annuncioDTO, BindingResult result,
+			Model model, RedirectAttributes redirectAttrs) {
+
+		if (result.hasErrors()) {
+			model.addAttribute("categorie_totali_attr",
+					CategoriaDTO.createCategoriaDTOListFromModelList(categoriaService.listAll()));
+			return "annuncio/edit";
+		}
+		try {
+			annuncioService.aggiorna(annuncioDTO.buildAnnuncioModel(true, true));
+			redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		} catch (AnnuncioChiusoEccezione e) {
+			redirectAttrs.addFlashAttribute("errorMessage",
+					"Attenzione! L'annuncio che stai cercando di modificare è già chiuso.");
+			return "redirect:/annuncio";
+		} catch (UtenteNotFoundException e) {
+			redirectAttrs.addFlashAttribute("errorMessage", "Attenzione! Utente non loggato.");
+			return "redirect:/annuncio";
+		}
+
+		return "redirect:/annuncio";
+	}
+
+	@GetMapping("/listaannunci/{username}")
+	public String gestioneAnnunci(@PathVariable(required = true) String username, Model model) {
+		model.addAttribute("annuncio_list_attr",
+				AnnuncioDTO.createAnnuncioDTOListFromModelList(annuncioService.gestioneAnnunci(username), false));
+		return "annuncio/list";
+	}
+
 }

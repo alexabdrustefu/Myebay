@@ -25,8 +25,8 @@
 	<main class="flex-shrink-0">
 		<div class="container">
 
-			<div class='card'>
-				<div class='card-header'>
+			<div class='card border border-success'>
+				<div class='card-header border border-success'>
 					<h5>Visualizza dettaglio</h5>
 				</div>
 

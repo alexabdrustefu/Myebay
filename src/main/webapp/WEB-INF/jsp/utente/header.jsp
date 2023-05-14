@@ -4,8 +4,7 @@
 
 <!-- Bootstrap CSS -->
 <link href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet" >
-<link href="${pageContext.request.contextPath}/assets/css/myform.css" rel="stylesheet" >
-<link href="${pageContext.request.contextPath}/assets/css/benvenuto.css" rel="stylesheet" >
+<link href="${pageContext.request.contextPath}/assets/css/button.css" rel="stylesheet" >
 
  <!-- Favicons -->
 <link rel="icon" href="${pageContext.request.contextPath}/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">

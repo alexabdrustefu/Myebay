@@ -34,19 +34,21 @@
 			</div>
 			
 			<div class="container-fluid py-3">
-			<h3 class="display-5 fw-bold">Benvenuto a MyEbay</h3><br>
-			
+			<button data-text="Awesome" class="button">
+		    <span class="actual-text">&nbsp;Benvenuto&nbsp;</span>
+		    <span class="hover-text" aria-hidden="true">&nbsp;Benvenuto&nbsp;</span>
+			</button>
 			<div class='card'>
 			
-			    <div class='card-header'>
+			    <div class='card-header border border-success'>
 			        <h5>Ricerca elementi</h5> 
 			    </div>
-			    <div class='card-body'>
+			    <div class='card-body border border-success'>
 	
 						<form:form modelAttribute="search_annuncio_attr" method="post" action="${pageContext.request.contextPath}/annuncio/list" class="row g-3">
 						
 							<div class="col-md-6">
-								<label for="testoAnnuncio" class="form-label">Testo Annuncio</label>
+								<label for="testoAnnuncio" class="form-label">Ricerca Annuncio</label>
 								<input type="text" name="testoAnnuncio" id="testoAnnuncio" class="form-control" placeholder="Inserire il testo dell'annuncio" >
 							</div>
 							
