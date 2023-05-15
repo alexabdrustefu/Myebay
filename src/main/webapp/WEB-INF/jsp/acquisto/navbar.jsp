@@ -13,7 +13,7 @@
             <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/home">Home</a>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/utente/ricarica/${utenteInPagina}">Ricarica credito</a></li>
               <li><a class="dropdown-item" href="${pageContext.request.contextPath}/annuncio/listaannunci/${utenteInPagina}">Gestione annunci</a></li>
-              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/acquisto/listaacquisti/${utenteInPagina}">I tuoi acquisti</a></li>
+              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/acquisto/listaacquisti">I tuoi acquisti</a></li>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Link</a>

@@ -32,49 +32,32 @@
 			</div>
 			
 			<div class='card'>
-			    <div class='card-header border border-success'>
-			        <h5>Lista dei risultati</h5> 
+			    <div class='card-header'>
+			        <h5>Miei acquisti</h5> 
 			    </div>
-			    <div class='card-body border border-success'>
-			    <sec:authorize access="isAuthenticated()">
-			    <a class="btn btn-primary "
-						href="${pageContext.request.contextPath}/annuncio/insert">Add New</a> </sec:authorize>
-		    	<a class="btn btn-outline-danger" href="${pageContext.request.contextPath}/annuncio/search" class='btn btn-outline-secondary' >
-				            <i class='fa fa-chevron-left'></i> Torna alla Ricerca
-				        </a>
+			    <div class='card-body'>
+
 			    
 			        <div class='table-responsive'>
 			            <table class='table table-striped ' >
 			                <thead>
 			                    <tr>
-			                        <th>Testo Annuncio</th>
+			                        <th>Descrizione</th>
 			                        <th>Prezzo </th>
-			                        <th>Data inserimento</th>
-			                        <th>Azioni</th>
+			                        <th>Data acquisto</th>
 			                    </tr>
 			                </thead>
 			                <tbody>
-			                	<c:forEach items="${annuncio_list_attr }" var="annuncioItem">
+			                	<c:forEach items="${acquisto_list_attr }" var="acquistoItem">
 									<tr>
-										<td>${annuncioItem.testoAnnuncio }</td>
-										<td>${annuncioItem.prezzo} €</td>
-										<td><fmt:parseDate value="${annuncioItem.dataCreazione}"
+										<td>${acquistoItem.descrizione }</td>
+										<td>${acquistoItem.prezzo} €</td>
+										<td><fmt:parseDate value="${acquistoItem.dataAcquisto}"
 												pattern="yyyy-MM-dd" var="localDateToBeParsed" type="date" />
 											<fmt:formatDate pattern="dd/MM/yyyy"
 												value="${localDateToBeParsed}" /></td>
 										<td>
-										<c:choose>
-												<c:when test="${!isAutenticato}"><a class="btn btn-sm btn-primary" href="${pageContext.request.contextPath}/annuncio/show/${annuncioItem.id }">Visualizza</a></c:when>
-												<c:otherwise>
-												<a class="btn btn-sm btn-outline-primary" href="${pageContext.request.contextPath}/annuncio/show/${annuncioItem.id }">Visualizza</a>
-												<sec:authentication property="principal.username" var="utenteInPagina"/>
-												<c:if test="${annuncioItem.utente.username == utenteInPagina }">
-												<a class="btn btn-sm btn-outline-danger" href="${pageContext.request.contextPath}/annuncio/delete/${annuncioItem.id }">Delete</a>
-												<a class="btn btn-sm btn-outline-primary" href="${pageContext.request.contextPath}/annuncio/edit/${annuncioItem.id }">Edit</a>
-												
-												</c:if>
-												</c:otherwise>
-										</c:choose>
+										
 											
 										</td>
 									</tr>

@@ -112,12 +112,7 @@ public class UtenteController {
 		return "redirect:/utente";
 	}
 
-//	@PostMapping("/cambiaPassword")
-//	public String cambiaPassword(@RequestParam(name = "idUtenteResetPassword", required = true)Long idUtenteResetPassword,RedirectAttributes redirectAttrs) {
-//		utenteService.resetPasswordByAdmin(idUtenteResetPassword);
-//		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
-//		return "redirect:/utente";
-//	}
+
 
 	@GetMapping("/show/{idUtente}")
 	public String show(@PathVariable(required = true) Long idUtente, Model model) {
@@ -131,7 +126,7 @@ public class UtenteController {
 	@GetMapping("/registrati")
 	public String registrati(Model model) {
 		model.addAttribute("insert_utente_attr", new UtenteDTO());
-		return "signup";
+		return "singup";
 	}
 
 	@PostMapping("/signup")
@@ -152,4 +147,20 @@ public class UtenteController {
 		return "redirect:/login";
 	}
 
+	@GetMapping("/ricarica/{utenteInPagina}")
+	public String ricarica(@PathVariable(required = true) String utenteInPagina, Model model) {
+		model.addAttribute("credito_utente_attr",
+				UtenteDTO.buildUtenteDTOFromModel(utenteService.findByUsername(utenteInPagina),false));
+		return "utente/ricarica";
+	}
+
+	@PostMapping("/ricarica")
+	public String ricaricaCredito(@ModelAttribute("credito_utente_attr") UtenteDTO utenteDTO, BindingResult result,
+			Model model, RedirectAttributes redirectAttrs) {
+
+		utenteService.ricarica(utenteDTO.buildUtenteModel(true));
+
+		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		return "redirect:/home";
+	}
 }

@@ -78,6 +78,14 @@
 						class='btn btn-outline-secondary' style='width: 80px'> <i
 						class='fa fa-chevron-left'></i> Back
 					</a>
+					<form action="${pageContext.request.contextPath}/acquisto/compra"
+						method="post">
+						<input type="hidden" value="${show_annuncio_attr.id}" name="idAnnuncio"
+							id="idAnnuncio">
+						<button type="submit" name="submit" id="submit"
+							class="btn btn-danger">Compra</button>
+							</form>
+					
 				</div>
 				<!-- end card -->
 			</div>

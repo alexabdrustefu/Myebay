@@ -24,7 +24,6 @@ public class MyebayApplication implements CommandLineRunner {
 
 	@Autowired
 	private CategoriaService categoriaServiceInstance;
-
 	public static void main(String[] args) {
 		SpringApplication.run(MyebayApplication.class, args);
 	}
