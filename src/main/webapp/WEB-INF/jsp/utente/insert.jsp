@@ -106,6 +106,7 @@
 										});
 										
 									});
+									
 								</script>
 								<%-- fine checkbox ruoli 	--%>
 								

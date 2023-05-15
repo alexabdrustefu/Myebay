@@ -14,5 +14,6 @@ public interface AcquistoService {
 	
 	public void registraAcquisto (Long idAnnuncio);
 	
+	
 
 }

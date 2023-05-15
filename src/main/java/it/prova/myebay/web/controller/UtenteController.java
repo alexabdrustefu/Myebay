@@ -61,6 +61,7 @@ public class UtenteController {
 	public String create(Model model) {
 		model.addAttribute("ruoli_totali_attr", RuoloDTO.createRuoloDTOListFromModelList(ruoloService.listAll()));
 		model.addAttribute("insert_utente_attr", new UtenteDTO());
+		
 		return "utente/insert";
 	}
 
@@ -151,7 +152,7 @@ public class UtenteController {
 	public String ricarica(@PathVariable(required = true) String utenteInPagina, Model model) {
 		model.addAttribute("credito_utente_attr",
 				UtenteDTO.buildUtenteDTOFromModel(utenteService.findByUsername(utenteInPagina),false));
-		return "utente/ricarica";
+		return "/utente/ricarica";
 	}
 
 	@PostMapping("/ricarica")

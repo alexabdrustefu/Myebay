@@ -58,10 +58,6 @@
 									<tr>
 										<td>${annuncioItem.testoAnnuncio }</td>
 										<td>${annuncioItem.prezzo} €</td>
-										<td><fmt:parseDate value="${annuncioItem.dataCreazione}"
-												pattern="yyyy-MM-dd" var="localDateToBeParsed" type="date" />
-											<fmt:formatDate pattern="dd/MM/yyyy"
-												value="${localDateToBeParsed}" /></td>
 										<td>
 										<c:choose>
 												<c:when test="${!isAutenticato}"><a class="btn btn-sm btn-primary" href="${pageContext.request.contextPath}/annuncio/show/${annuncioItem.id }">Visualizza</a></c:when>
@@ -75,7 +71,6 @@
 												</c:if>
 												</c:otherwise>
 										</c:choose>
-											
 										</td>
 									</tr>
 								</c:forEach>

@@ -67,10 +67,12 @@ public class UtenteServiceImpl implements UtenteService {
 	@Override
 	@Transactional
 	public void inserisciNuovo(Utente utenteInstance) {
+			
 		utenteInstance.setStato(StatoUtente.CREATO);
 		utenteInstance.setPassword(passwordEncoder.encode(utenteInstance.getPassword()));
 		utenteInstance.setDateCreated(LocalDate.now());
 		repository.save(utenteInstance);
+		
 
 	}
 
@@ -167,8 +169,6 @@ public class UtenteServiceImpl implements UtenteService {
 	@Override
 	@Transactional
 	public void ricarica(Utente utenteInstance) {
-		
-		
 		repository.ricaricaByUsername(utenteInstance.getCreditoResiduo(),utenteInstance.getId());;
 	}
 
